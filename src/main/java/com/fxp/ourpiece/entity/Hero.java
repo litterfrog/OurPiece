@@ -110,9 +110,13 @@ public class Hero {
 	public void setSpeakWhat(String speakWhat) {
 		this.speakWhat = speakWhat;
 	}
+	private transient TimerTask task;
 	public void setTimedSpeakWhat(String speakWhat) {
 		this.speakWhat = speakWhat;
-		speakTimer.schedule(new TimerTask() {
+		if(task!=null){
+			task.cancel();			
+		}
+		task=new TimerTask() {
 			
 			@Override
 			public void run() {
@@ -120,7 +124,8 @@ public class Hero {
 				Hero.this.speakWhat="";
 				
 			}
-		}, 3000);
+		};
+		speakTimer.schedule(task, 3000);
 	}
 
 }

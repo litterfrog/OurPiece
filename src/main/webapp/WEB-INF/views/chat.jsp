@@ -105,8 +105,9 @@
 		this.context.clearRect(0, 0, 660, 400);
         for (var id in this.heros) {
            // this.heros[id].draw(this.context);
-           	this.context.fillText(this.heros[id].speakWhat, this.heros[id].location.x, this.heros[id].location.y-3);
+           	
         	this.context.fillStyle=this.heros[id].hexColor;
+        	this.context.fillText(this.heros[id].speakWhat, this.heros[id].location.x, this.heros[id].location.y-3);
         	this.context.fillRect(this.heros[id].location.x, this.heros[id].location.y, Game.gridSize, Game.gridSize);
         }
 	}
