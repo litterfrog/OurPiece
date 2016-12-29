@@ -10,10 +10,11 @@
 	float:left;
 }
 #divgame{
+	margin:0px 0px 0px 10px;
 	float:left;
 }
 #gcanvas{
-	margin:0px 0px 0px 10px;
+	margin:0px 0px 5px 0px;
 	background:black;
 }
 </style>
@@ -46,12 +47,22 @@
 	Game.nextFrame=null;
 	Game.draw=null;
 	
+//	function Hero(){
+//		this.
+//	}
+//    Hero.prototype.draw = function(context) {
+    	
+//    }
+	
+	
 	Game.initialize=function(){
         if (!($("#gcanvas")[0].getContext)) {
             alert('Error: 2d canvas not supported by this browser.');
             return;
         }
 		Game.context=$("#gcanvas")[0].getContext('2d');
+		//设置字体样式
+	    Game.context.font = "10px Courier New";
 		Game.setKeyListener();
 		Game.connect();
 	}
@@ -94,6 +105,7 @@
 		this.context.clearRect(0, 0, 660, 400);
         for (var id in this.heros) {
            // this.heros[id].draw(this.context);
+           	this.context.fillText(this.heros[id].speakWhat, this.heros[id].location.x, this.heros[id].location.y-3);
         	this.context.fillStyle=this.heros[id].hexColor;
         	this.context.fillRect(this.heros[id].location.x, this.heros[id].location.y, Game.gridSize, Game.gridSize);
         }
@@ -137,7 +149,7 @@
 		var message={direction:direction};
 		Game.stomp.send("/app/movedirection", {priority: 9}, JSON.stringify(message));
 	}
-	//Game.initialize();
+	
 
 	
 //	var gc=$("#gcanvas")[0].getContext('2d');
@@ -157,10 +169,23 @@
 		
 //	});
 
-
 	function startgame(){
 		if(Game.stomp==null){
 			Game.initialize();
+		}
+		
+	}
+	function speak(){
+		if(Game.stomp==null){
+			alert("游戏还未开始或游戏链接已断开，请重新连接。");
+			return;
+		}
+		var message=$("#speakwhat").val();
+		if(message==null||message==""){
+			alert("内容不能为空!");
+		}else{
+			Game.stomp.send("/app/speak", {priority: 9}, JSON.stringify({message:message}));
+			$("#speakwhat").val("");
 		}
 		
 	}
@@ -180,8 +205,10 @@
 <div id="divgame">
 	<canvas id="gcanvas" width="660" height="400">
 		<span>不支持canvas</span>
-	</canvas>
+	</canvas><br/>
 	<input type="button" id="startgame" value="开始游戏" onclick="startgame()">
+	<input type="text" id="speakwhat">
+	<input type="button" id="speak" value="讲话" onclick="speak()">
 </div>
 </body>
 </html>

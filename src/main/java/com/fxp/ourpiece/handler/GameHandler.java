@@ -41,9 +41,11 @@ public class GameHandler {
 	public void handleMoveDirection(String payload,Principal principal) throws JsonParseException, JsonMappingException, IOException{
 		System.out.println("principal:"+principal.getName());
 		
-		//useful code		
+		//useful code	
+		//JSON String->Object	
 		HashMap map = mapper.readValue(payload,HashMap.class);
-		System.out.println(map.get("direction"));
+		System.out.println("handleMoveDirection-direction"+map.get("direction"));
+		
 		String direction=(String) map.get("direction");
 		if(null!=map&&null!=direction){
 			if(gameService.getHeros().containsKey(principal.getName())){
@@ -70,15 +72,24 @@ public class GameHandler {
 
 		}
 		
-		
-		
-		
-		
 		//test code
 		System.out.println("gameService:"+gameService.getMessagingTemplate());
 		String writeValueAsString = mapper.writeValueAsString(gameService.getHeros());
 		System.out.println("***************");
 		System.out.println(writeValueAsString);
 		System.out.println("***************");
+	}
+	@MessageMapping("/speak")
+	public void handleSpeak(String payload,Principal principal) throws JsonParseException, JsonMappingException, IOException{
+		//JSON String->Object	
+		HashMap map = mapper.readValue(payload,HashMap.class);
+		System.out.println("handleSpeak-message:"+map.get("message"));
+		
+		String message=(String) map.get("message");
+		if(null!=map&&null!=message){
+			if(gameService.getHeros().containsKey(principal.getName())){
+				gameService.getHeros().get(principal.getName()).setTimedSpeakWhat(message);
+			}
+		}
 	}
 }

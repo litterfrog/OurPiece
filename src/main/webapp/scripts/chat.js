@@ -36,11 +36,12 @@ function connect(){
 	$("#message").focus();
 }
 function sendMessage(){
-	var message=$("#message").val();
+	
 	if(stomp==null){
 		alert("未建立连接!");
 		return;
 	}
+	var message=$("#message").val();
 	if(message==null||message==""){
 		alert("信息不能为空!");
 	}else{

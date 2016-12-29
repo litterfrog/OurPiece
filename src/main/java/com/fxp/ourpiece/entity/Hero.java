@@ -1,12 +1,17 @@
 package com.fxp.ourpiece.entity;
 
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import com.fxp.ourpiece.service.GameService;
 import com.fxp.ourpiece.util.GameUtils;
 
 public class Hero {
 	private Integer id;
 	private String userName;
+	private String speakWhat="";
+	private Timer speakTimer=new Timer(GameService.class.getSimpleName() + " Timer"+id);
 //	颜色不可变
 	private final String hexColor;
 //	方向位置可变
@@ -98,5 +103,24 @@ public class Hero {
 		return false;
 	}
 
+	public String getSpeakWhat() {
+		return speakWhat;
+	}
+
+	public void setSpeakWhat(String speakWhat) {
+		this.speakWhat = speakWhat;
+	}
+	public void setTimedSpeakWhat(String speakWhat) {
+		this.speakWhat = speakWhat;
+		speakTimer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				System.out.println("hero speak task");
+				Hero.this.speakWhat="";
+				
+			}
+		}, 3000);
+	}
 
 }
