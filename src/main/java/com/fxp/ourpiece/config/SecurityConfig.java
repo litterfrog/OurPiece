@@ -4,6 +4,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
@@ -16,6 +17,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin()//form based authentication is supported
                 .loginPage("/login").defaultSuccessUrl("/chat", true)
                 .permitAll();
+    	
     }
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -26,5 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.withUser("whc").password("whc").roles("USER").and()
 				.withUser("fuy").password("fuy").roles("USER").and()
 				.withUser("admin").password("admin").roles("ADMIN","USER");
+		
 	}
+	
 }

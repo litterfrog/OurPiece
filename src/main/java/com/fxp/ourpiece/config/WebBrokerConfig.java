@@ -10,11 +10,12 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 @Configuration
 @EnableScheduling
 @EnableWebSocketMessageBroker
-public class WebBrokerConfig extends AbstractWebSocketMessageBrokerConfigurer {
+public class WebBrokerConfig extends AbstractWebSocketMessageBrokerConfigurer/*AbstractSecurityWebSocketMessageBrokerConfigurer*/ {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/ourpiece").withSockJS();
+		registry.addEndpoint("/game").withSockJS();
 
 	}
 	@Override
@@ -22,5 +23,8 @@ public class WebBrokerConfig extends AbstractWebSocketMessageBrokerConfigurer {
 		registry.enableSimpleBroker("/topic/", "/queue/");
 		registry.setApplicationDestinationPrefixes("/app");
 	}
-
+//    @Override 
+//    protected boolean sameOriginDisabled() { 
+//        return true; 
+//    }
 }

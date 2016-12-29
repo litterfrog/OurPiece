@@ -16,7 +16,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 @EnableWebMvc
 @EnableWebSocket
 public class WebConfig extends WebMvcConfigurerAdapter{
-
 	@Bean
 	public ViewResolver viewResolver(){
 		InternalResourceViewResolver viewResolver=new InternalResourceViewResolver();
