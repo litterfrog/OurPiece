@@ -95,6 +95,10 @@
 		 function handleAddPlayer(message){
 			 var heros=JSON.parse(message.body);
 			 for (var id in heros) {
+				 if(Game.map.containsKey(heros[id].userName)){
+					 //避免加入僵尸
+					 continue;
+				 }
 				 Game.map.put(heros[id].userName,heros[id])
 				 jc.start('gcanvas');	
 				 jc.text("",heros[id].location.x,heros[id].location.y-5,150,heros[id].hexColor,1).name(heros[id].userName).id(heros[id].userName+'Text');
@@ -188,11 +192,16 @@
 
 $(function(){
 //	var gc=$("#gcanvas")[0].getContext('2d');
-//	jc.start('gcanvas',true);//第二个参数重绘
+	jc.start('gcanvas',true);//第二个参数重绘
 //	jc.rect(50,200,20,20,'#ff0099',1).click(function(){
 //		alert("I am you hero");
 //	}).id('hero');
-//	jc.start('gcanvas');
+	var baseX=200;
+	var baseY=20;
+	var simpSword=[[baseX,baseY],[baseX+7,baseY+70],[baseX+3,baseY+70],[baseX+3,baseY+85],[baseX-3,baseY+85],[baseX-3,baseY+70],[baseX-7,baseY+70]];	
+	jc.line(simpSword,'rgb(255,0,0)',1);
+	jc.text("绝世宝剑，只有传说中的英雄才配拥有它",95,140,'rgb(255,255,0)');
+	jc.start('gcanvas');
 //	var mx=100;
 //	$("#ophero").click(function(){
 //		jc('#hero').animate({x:mx,y:200},1000);
