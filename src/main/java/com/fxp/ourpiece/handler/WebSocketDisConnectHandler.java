@@ -18,6 +18,7 @@ public class WebSocketDisConnectHandler implements ApplicationListener<SessionDi
 //		String simpSessionId = SimpMessageHeaderAccessor.getSessionId(headers);
 		System.out.println("onApplicationEvent-removeUser:"+event.getUser().getName());
 		gameService.removeHero(event.getUser().getName());
+		gameService.messagingTemplate.convertAndSend("/topic/removeplayer",event.getUser().getName());
 	}
 
 }

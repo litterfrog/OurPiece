@@ -22,7 +22,7 @@ import com.fxp.ourpiece.entity.Hero;
 @Service
 public class GameService implements ApplicationListener<BrokerAvailabilityEvent>  {
 	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
+	public SimpMessageSendingOperations messagingTemplate;
 	
 	private AtomicBoolean brokerAvailable = new AtomicBoolean();
 	
@@ -33,6 +33,7 @@ public class GameService implements ApplicationListener<BrokerAvailabilityEvent>
 	private ObjectMapper mapper = new ObjectMapper();
 
 	private  long TICK_DELAY=100;
+	private  long PERIOD=100;
 	
     private  final ConcurrentHashMap<String, Hero> heros = new ConcurrentHashMap<String, Hero>();
     
@@ -90,7 +91,7 @@ public class GameService implements ApplicationListener<BrokerAvailabilityEvent>
             }
 
 
-        }, TICK_DELAY, TICK_DELAY);
+        }, TICK_DELAY, PERIOD);
 		
 	}
     
@@ -99,7 +100,7 @@ public class GameService implements ApplicationListener<BrokerAvailabilityEvent>
 			for(Hero hero:getHerosCollection()){
 				hero.update(getHerosCollection());
 			}
-			this.messagingTemplate.convertAndSend("/topic/gamebeam", mapper.writeValueAsString(getHeros()));
+			this.messagingTemplate.convertAndSend("/topic/gamebeam", getMapper().writeValueAsString(getHerosCollection()));
 		}
 		
 	}
@@ -122,5 +123,11 @@ public class GameService implements ApplicationListener<BrokerAvailabilityEvent>
 	public void onApplicationEvent(BrokerAvailabilityEvent event) {
 		this.brokerAvailable.set(event.isBrokerAvailable());
 		
+	}
+
+
+
+	public ObjectMapper getMapper() {
+		return mapper;
 	}   
 }

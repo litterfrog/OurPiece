@@ -23,6 +23,7 @@
 <script type="text/javascript" src="scripts/sockjs.js"></script>
 <script type="text/javascript" src="scripts/stomp.js"></script>
 <script type="text/javascript" src="scripts/chat.js"></script>
+<script type="text/javascript" src="scripts/map.js"></script>
 <script type="text/javascript">
 //{"id":1,"simpSessionId":"ke43hrme","hexColor":"#e6aed6","direction":"NONE","location":{"x":120,"y":160}},{"id":2,"simpSessionId":"rbpkngd0","hexColor":"#e6c8ca","direction":"NONE","location":{"x":140,"y":320}}
 
@@ -41,11 +42,16 @@
 	Game.initialize=null;
 	Game.connect=null;
 	Game.setKeyListener=null;
+//	第一种动画实现调用
 	Game.startGameLoop=null;
-	Game.stopGameLoop=null;
+	Game.stopGameLoop=null;	
 	Game.run=null;
 	Game.nextFrame=null;
 	Game.draw=null;
+//	第二种动画实现调用
+	Game.startjcAnimate=null;
+	Game.period=100;
+	Game.map=new Map();
 	
 //	function Hero(){
 //		this.
@@ -71,10 +77,12 @@
 		 Game.stomp = Stomp.over(Game.socket);
 		 var connect_callback = function() {
 		   	Game.stomp.subscribe("/topic/gamebeam", handleGameBeam);
-		   	Game.startGameLoop();
+		   	Game.stomp.subscribe("/topic/addplayer", handleAddPlayer);
+		   	Game.stomp.subscribe("/topic/removeplayer", handleRemovePlayer);
+		   	//Game.startGameLoop();
 		 }
 		 var error_callback = function(error) {
-			Game.stopGameLoop();
+			//Game.stopGameLoop();
 		    alert(error);
 			Game.stomp=null;
 		 };	
@@ -82,9 +90,35 @@
 			 var heros=JSON.parse(message.body);
 			 //更新heros
 			 Game.heros=heros;
+			 Game.startjcAnimate();
+		 }
+		 function handleAddPlayer(message){
+			 var heros=JSON.parse(message.body);
+			 for (var id in heros) {
+				 Game.map.put(heros[id].userName,heros[id])
+				 jc.start('gcanvas');	
+				 jc.text("",heros[id].location.x,heros[id].location.y-5,150,heros[id].hexColor,1).name(heros[id].userName).id(heros[id].userName+'Text');
+				 jc.rect(heros[id].location.x,heros[id].location.y, Game.gridSize, Game.gridSize,heros[id].hexColor,1).name(heros[id].userName).id(heros[id].userName+'Body');
+				 jc.start('gcanvas');
+			 }			 
+		 }
+		 function handleRemovePlayer(message){
+			 var userName=String(message.body);
+			 jc.start('gcanvas',true);
+			 jc('.'+userName).del();
+			 jc.start('gcanvas');
+			 Game.map.remove(userName);
 		 }
 		 Game.stomp.connect({},connect_callback,error_callback);
 
+	}
+	Game.startjcAnimate=function(){
+		for (var id in this.heros) {
+			jc.start('gcanvas',true);
+			jc('.'+this.heros[id].userName).stop(true);
+			jc('#'+this.heros[id].userName+'Text').string(this.heros[id].speakWhat).animate({x:this.heros[id].location.x,y:this.heros[id].location.y-5},this.period);	
+			jc('#'+this.heros[id].userName+'Body').animate({x:this.heros[id].location.x,y:this.heros[id].location.y},this.period);
+		}
 	}
 	Game.startGameLoop=function(){
 		window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -152,7 +186,7 @@
 	}
 	
 
-	
+$(function(){
 //	var gc=$("#gcanvas")[0].getContext('2d');
 //	jc.start('gcanvas',true);//第二个参数重绘
 //	jc.rect(50,200,20,20,'#ff0099',1).click(function(){
@@ -169,7 +203,7 @@
 //		}
 		
 //	});
-
+})	
 	function startgame(){
 		if(Game.stomp==null){
 			Game.initialize();
