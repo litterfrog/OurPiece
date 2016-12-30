@@ -69,17 +69,21 @@ public class Hero {
     public synchronized void update(Collection<Hero> heros) throws Exception {
         Location nextLocation = location.getAdjacentLocation(direction);
 
-        if (nextLocation.x >= GameUtils.PLAYFIELD_WIDTH) {
-            nextLocation.x = 0;
+        if (nextLocation.x >= GameUtils.PLAYFIELD_WIDTH-(Location.GRID_SIZE-Location.STEP)) {
+            //nextLocation.x = 0;
+        	nextLocation=location;
         }
-        if (nextLocation.y >= GameUtils.PLAYFIELD_HEIGHT) {
-            nextLocation.y = 0;
+        if (nextLocation.y >= GameUtils.PLAYFIELD_HEIGHT-(Location.GRID_SIZE-Location.STEP)) {
+            //nextLocation.y = 0;
+        	nextLocation=location;
         }
         if (nextLocation.x < 0) {
-            nextLocation.x = GameUtils.PLAYFIELD_WIDTH;
+            //nextLocation.x = GameUtils.PLAYFIELD_WIDTH;
+        	nextLocation=location;
         }
         if (nextLocation.y < 0) {
-            nextLocation.y = GameUtils.PLAYFIELD_HEIGHT;
+            //nextLocation.y = GameUtils.PLAYFIELD_HEIGHT;
+        	nextLocation=location;
         }
       //避免碰撞,如果新位置将会发生碰撞则不前往新位置
         if(!willCrash(nextLocation,heros)){
