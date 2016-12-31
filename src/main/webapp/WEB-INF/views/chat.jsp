@@ -154,28 +154,34 @@
 		Game.nextFrame = null;
 	}
 	Game.setKeyListener=function(){
+		function setForwardDirection(code){
+			switch(code){
+			case 37://left
+				if(Game.direction!='west') Game.setDirection('west');
+				//jc('#hero').animate({x:0},1000);
+				break;
+			case 38://up
+				if(Game.direction!='north') Game.setDirection('north');
+				break;
+			case 39://right
+				if(Game.direction!='east') Game.setDirection('east');
+				break;
+			case 40://down
+				if(Game.direction!='south') Game.setDirection('south');
+				break;				
+			}
+		}
+		
+		
 		$(window).keydown(function(e){
 			var code = e.keyCode;
 			if (code > 36 && code < 41) {
 				Game.keyMap.put(code,'down');
-				switch(code){
-				case 37://left
-					if(Game.direction!='west') Game.setDirection('west');
-					//jc('#hero').animate({x:0},1000);
-					break;
-				case 38://up
-					if(Game.direction!='north') Game.setDirection('north');
-					break;
-				case 39://right
-					if(Game.direction!='east') Game.setDirection('east');
-					break;
-				case 40://down
-					if(Game.direction!='south') Game.setDirection('south');
-					break;				
-				}
+				setForwardDirection(code);
 			}
 			
 		});
+
 		$(window).keypress(function(e){
 			var code = e.keyCode;
 			if (code > 36 && code < 41) {//这些功能键没有press事件
@@ -187,6 +193,7 @@
 				Game.keyMap.remove(code);
 				for(var i=0;i<Game.keyMap.keys.length;i++){
 					if(Game.keyMap.get(Game.keyMap.keys[i])=='down'){
+						setForwardDirection(Game.keyMap.keys[i]);
 						return;
 					}				
 				}
