@@ -51,8 +51,8 @@
 //	第二种动画实现调用
 	Game.startjcAnimate=null;
 	Game.period=100;
-	Game.map=new Map();
-	
+	Game.heroMap=new Map();
+	Game.keyMap=new Map();
 //	function Hero(){
 //		this.
 //	}
@@ -85,6 +85,7 @@
 			//Game.stopGameLoop();
 		    alert(error);
 			Game.stomp=null;
+			Game.heroMap=null;
 		 };	
 		 function handleGameBeam(message){
 			 var heros=JSON.parse(message.body);
@@ -95,11 +96,11 @@
 		 function handleAddPlayer(message){
 			 var heros=JSON.parse(message.body);
 			 for (var id in heros) {
-				 if(Game.map.containsKey(heros[id].userName)){
+				 if(Game.heroMap.containsKey(heros[id].userName)){
 					 //避免加入僵尸
 					 continue;
 				 }
-				 Game.map.put(heros[id].userName,heros[id])
+				 Game.heroMap.put(heros[id].userName,heros[id])
 				 jc.start('gcanvas');	
 				 jc.text("",heros[id].location.x,heros[id].location.y-5,150,heros[id].hexColor,1).name(heros[id].userName).id(heros[id].userName+'Text');
 				 jc.rect(heros[id].location.x,heros[id].location.y, Game.gridSize, Game.gridSize,heros[id].hexColor,1).name(heros[id].userName).id(heros[id].userName+'Body');
@@ -111,7 +112,7 @@
 			 jc.start('gcanvas',true);
 			 jc('.'+userName).del();
 			 jc.start('gcanvas');
-			 Game.map.remove(userName);
+			 Game.heroMap.remove(userName);
 		 }
 		 Game.stomp.connect({},connect_callback,error_callback);
 
@@ -156,6 +157,7 @@
 		$(window).keydown(function(e){
 			var code = e.keyCode;
 			if (code > 36 && code < 41) {
+				Game.keyMap.put(code,'down');
 				switch(code){
 				case 37://left
 					if(Game.direction!='west') Game.setDirection('west');
@@ -174,9 +176,20 @@
 			}
 			
 		});
+		$(window).keypress(function(e){
+			var code = e.keyCode;
+			if (code > 36 && code < 41) {//这些功能键没有press事件
+			}
+		});
 		$(window).keyup(function(e){
 			var code = e.keyCode;
 			if (code > 36 && code < 41) {
+				Game.keyMap.remove(code);
+				for(var i=0;i<Game.keyMap.keys.length;i++){
+					if(Game.keyMap.get(Game.keyMap.keys[i])=='down'){
+						return;
+					}				
+				}
 				Game.setDirection('none');
 			}
 		});

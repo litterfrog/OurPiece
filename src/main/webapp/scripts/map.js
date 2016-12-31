@@ -11,11 +11,13 @@ function Map() {
      * @param {Object} value 
      */  
     this.put = function(key, value) {  
-        if(this.data[key] == null){  
+        if(this.data[key] == null){ 
             this.keys.push(key);  
             this.data[key] = value;  
-        }else{  
-            this.data[key]=this.data[key];  
+        }else{
+        	//bug:key赋值过一次后就不能再次相应的value不能再更新
+            //this.data[key]=this.data[key]; 
+        	this.data[key]=value;
         }  
         return true;  
     };  
@@ -35,11 +37,13 @@ function Map() {
      */  
     this.remove = function(key) {  
         for(var i=0;i<this.keys.length;i++){  
-            if(key===this.keys[i]){  
+            if(key===this.keys[i]){ 
+            	this.data[key] = null; 
                 var del_keys= this.keys.splice(i,1);  
-                for(k in del_keys){  
-                    this.data[k] = null;  
-                }  
+                //bug:data remove 不掉
+//                for(k in del_keys){
+//                    this.data[k] = null;  
+ //               }  
                 return true;  
             }  
         }  
